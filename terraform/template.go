@@ -2,7 +2,9 @@ package terraform
 
 import (
 	"bytes"
-	"html/template"
+	html_template "html/template"
+	"io"
+	text_template "text/template"
 )
 
 const (
@@ -75,6 +77,61 @@ const (
 `
 )
 
+// RawTemplate is an interface for html/template.Template or text/template.Template
+type RawTemplate interface {
+	Parse(text string) error
+	Execute(writer io.Writer, data interface{}) error
+}
+
+type RawHTMLTemplate struct {
+	template *html_template.Template
+}
+
+func NewRawHTMLTemplate() RawHTMLTemplate {
+	return RawHTMLTemplate{
+		template: html_template.New("template"),
+	}
+}
+
+func (raw RawHTMLTemplate) Parse(text string) error {
+	tpl, error := raw.template.Parse(text)
+
+	if error != nil {
+		return error
+	}
+
+	raw.template = tpl
+	return nil
+}
+
+func (raw RawHTMLTemplate) Execute(writer io.Writer, data interface{}) error {
+	return raw.template.Execute(writer, data)
+}
+
+type RawTextTemplate struct {
+	template *text_template.Template
+}
+
+func NewRawTextTemplate() RawTextTemplate {
+	return RawTextTemplate{
+		template: text_template.New("template"),
+	}
+}
+
+func (raw RawTextTemplate) Parse(text string) error {
+	tpl, error := raw.template.Parse(text)
+	if error != nil {
+		return error
+	}
+
+	raw.template = tpl
+	return nil
+}
+
+func (raw RawTextTemplate) Execute(writer io.Writer, data interface{}) error {
+	return raw.template.Execute(writer, data)
+}
+
 // Template is an template interface for parsed terraform execution result
 type Template interface {
 	Execute() (resp string, err error)
@@ -84,11 +141,12 @@ type Template interface {
 
 // CommonTemplate represents template entities
 type CommonTemplate struct {
-	Title   string
-	Message string
-	Result  string
-	Body    string
-	Link    string
+	Title       string
+	Message     string
+	Result      string
+	Body        string
+	Link        string
+	RawTemplate RawTemplate
 }
 
 // DefaultTemplate is a default template for terraform commands
@@ -161,12 +219,12 @@ func NewApplyTemplate(template string) *ApplyTemplate {
 
 // Execute binds the execution result of terraform command into tepmlate
 func (t *DefaultTemplate) Execute() (resp string, err error) {
-	tpl, err := template.New("default").Parse(t.Template)
+	err = t.RawTemplate.Parse(t.Template)
 	if err != nil {
 		return resp, err
 	}
 	var b bytes.Buffer
-	if err := tpl.Execute(&b, map[string]interface{}{
+	if err := t.RawTemplate.Execute(&b, map[string]interface{}{
 		"Title":   t.Title,
 		"Message": t.Message,
 		"Result":  "",
@@ -181,12 +239,12 @@ func (t *DefaultTemplate) Execute() (resp string, err error) {
 
 // Execute binds the execution result of terraform fmt into tepmlate
 func (t *FmtTemplate) Execute() (resp string, err error) {
-	tpl, err := template.New("fmt").Parse(t.Template)
+	err = t.RawTemplate.Parse(t.Template)
 	if err != nil {
 		return resp, err
 	}
 	var b bytes.Buffer
-	if err := tpl.Execute(&b, map[string]interface{}{
+	if err := t.RawTemplate.Execute(&b, map[string]interface{}{
 		"Title":   t.Title,
 		"Message": t.Message,
 		"Result":  "",
@@ -201,12 +259,12 @@ func (t *FmtTemplate) Execute() (resp string, err error) {
 
 // Execute binds the execution result of terraform plan into tepmlate
 func (t *PlanTemplate) Execute() (resp string, err error) {
-	tpl, err := template.New("plan").Parse(t.Template)
+	err = t.RawTemplate.Parse(t.Template)
 	if err != nil {
 		return resp, err
 	}
 	var b bytes.Buffer
-	if err := tpl.Execute(&b, map[string]interface{}{
+	if err := t.RawTemplate.Execute(&b, map[string]interface{}{
 		"Title":   t.Title,
 		"Message": t.Message,
 		"Result":  t.Result,
@@ -221,12 +279,12 @@ func (t *PlanTemplate) Execute() (resp string, err error) {
 
 // Execute binds the execution result of terraform apply into tepmlate
 func (t *ApplyTemplate) Execute() (resp string, err error) {
-	tpl, err := template.New("apply").Parse(t.Template)
+	err = t.RawTemplate.Parse(t.Template)
 	if err != nil {
 		return resp, err
 	}
 	var b bytes.Buffer
-	if err := tpl.Execute(&b, map[string]interface{}{
+	if err := t.RawTemplate.Execute(&b, map[string]interface{}{
 		"Title":   t.Title,
 		"Message": t.Message,
 		"Result":  t.Result,

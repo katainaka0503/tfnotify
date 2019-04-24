@@ -13,7 +13,9 @@ func TestDefaultTemplateExecute(t *testing.T) {
 	}{
 		{
 			template: DefaultDefaultTemplate,
-			value:    CommonTemplate{},
+			value: CommonTemplate{
+				RawTemplate: NewRawHTMLTemplate(),
+			},
 			resp: `
 ## Terraform result
 
@@ -29,7 +31,8 @@ func TestDefaultTemplateExecute(t *testing.T) {
 		{
 			template: DefaultDefaultTemplate,
 			value: CommonTemplate{
-				Message: "message",
+				Message:     "message",
+				RawTemplate: NewRawHTMLTemplate(),
 			},
 			resp: `
 ## Terraform result
@@ -46,10 +49,11 @@ message
 		{
 			template: DefaultDefaultTemplate,
 			value: CommonTemplate{
-				Title:   "a",
-				Message: "b",
-				Result:  "c",
-				Body:    "d",
+				Title:       "a",
+				Message:     "b",
+				Result:      "c",
+				Body:        "d",
+				RawTemplate: NewRawHTMLTemplate(),
 			},
 			resp: `
 a
@@ -67,10 +71,11 @@ b
 		{
 			template: "",
 			value: CommonTemplate{
-				Title:   "a",
-				Message: "b",
-				Result:  "c",
-				Body:    "d",
+				Title:       "a",
+				Message:     "b",
+				Result:      "c",
+				Body:        "d",
+				RawTemplate: NewRawHTMLTemplate(),
 			},
 			resp: `
 a
@@ -87,10 +92,11 @@ b
 		{
 			template: `{{ .Title }}-{{ .Message }}-{{ .Result }}-{{ .Body }}`,
 			value: CommonTemplate{
-				Title:   "a",
-				Message: "b",
-				Result:  "should be used as body",
-				Body:    "should be empty",
+				Title:       "a",
+				Message:     "b",
+				Result:      "should be used as body",
+				Body:        "should be empty",
+				RawTemplate: NewRawHTMLTemplate(),
 			},
 			resp: `a-b--should be used as body`,
 		},
@@ -116,7 +122,9 @@ func TestFmtTemplateExecute(t *testing.T) {
 	}{
 		{
 			template: DefaultFmtTemplate,
-			value:    CommonTemplate{},
+			value: CommonTemplate{
+				RawTemplate: NewRawHTMLTemplate(),
+			},
 			resp: `
 ## Fmt result
 
@@ -130,7 +138,8 @@ func TestFmtTemplateExecute(t *testing.T) {
 		{
 			template: DefaultFmtTemplate,
 			value: CommonTemplate{
-				Message: "message",
+				Message:     "message",
+				RawTemplate: NewRawHTMLTemplate(),
 			},
 			resp: `
 ## Fmt result
@@ -145,10 +154,11 @@ message
 		{
 			template: DefaultFmtTemplate,
 			value: CommonTemplate{
-				Title:   "a",
-				Message: "b",
-				Result:  "c",
-				Body:    "d",
+				Title:       "a",
+				Message:     "b",
+				Result:      "c",
+				Body:        "d",
+				RawTemplate: NewRawHTMLTemplate(),
 			},
 			resp: `
 a
@@ -164,10 +174,11 @@ c
 		{
 			template: "",
 			value: CommonTemplate{
-				Title:   "a",
-				Message: "b",
-				Result:  "c",
-				Body:    "d",
+				Title:       "a",
+				Message:     "b",
+				Result:      "c",
+				Body:        "d",
+				RawTemplate: NewRawHTMLTemplate(),
 			},
 			resp: `
 a
@@ -182,10 +193,11 @@ c
 		{
 			template: `{{ .Title }}-{{ .Message }}-{{ .Result }}-{{ .Body }}`,
 			value: CommonTemplate{
-				Title:   "a",
-				Message: "b",
-				Result:  "should be used as body",
-				Body:    "should be empty",
+				Title:       "a",
+				Message:     "b",
+				Result:      "should be used as body",
+				Body:        "should be empty",
+				RawTemplate: NewRawHTMLTemplate(),
 			},
 			resp: `a-b--should be used as body`,
 		},
@@ -211,7 +223,9 @@ func TestPlanTemplateExecute(t *testing.T) {
 	}{
 		{
 			template: DefaultPlanTemplate,
-			value:    CommonTemplate{},
+			value:    CommonTemplate{
+				RawTemplate: NewRawHTMLTemplate(),
+			},
 			resp: `
 ## Plan result
 
@@ -227,10 +241,11 @@ func TestPlanTemplateExecute(t *testing.T) {
 		{
 			template: DefaultPlanTemplate,
 			value: CommonTemplate{
-				Title:   "title",
-				Message: "message",
-				Result:  "result",
-				Body:    "body",
+				Title:       "title",
+				Message:     "message",
+				Result:      "result",
+				Body:        "body",
+				RawTemplate: NewRawHTMLTemplate(),
 			},
 			resp: `
 title
@@ -250,10 +265,11 @@ message
 		{
 			template: DefaultPlanTemplate,
 			value: CommonTemplate{
-				Title:   "title",
-				Message: "message",
-				Result:  "",
-				Body:    "body",
+				Title:       "title",
+				Message:     "message",
+				Result:      "",
+				Body:        "body",
+				RawTemplate: NewRawHTMLTemplate(),
 			},
 			resp: `
 title
@@ -270,10 +286,11 @@ message
 		{
 			template: "",
 			value: CommonTemplate{
-				Title:   "title",
-				Message: "message",
-				Result:  "",
-				Body:    "body",
+				Title:       "title",
+				Message:     "message",
+				Result:      "",
+				Body:        "body",
+				RawTemplate: NewRawHTMLTemplate(),
 			},
 			resp: `
 title
@@ -290,10 +307,11 @@ message
 		{
 			template: `{{ .Title }}-{{ .Message }}-{{ .Result }}-{{ .Body }}`,
 			value: CommonTemplate{
-				Title:   "a",
-				Message: "b",
-				Result:  "c",
-				Body:    "d",
+				Title:       "a",
+				Message:     "b",
+				Result:      "c",
+				Body:        "d",
+				RawTemplate: NewRawHTMLTemplate(),
 			},
 			resp: `a-b-c-d`,
 		},
@@ -319,7 +337,9 @@ func TestApplyTemplateExecute(t *testing.T) {
 	}{
 		{
 			template: DefaultApplyTemplate,
-			value:    CommonTemplate{},
+			value: CommonTemplate{
+				RawTemplate: NewRawHTMLTemplate(),
+			},
 			resp: `
 ## Apply result
 
@@ -335,10 +355,11 @@ func TestApplyTemplateExecute(t *testing.T) {
 		{
 			template: DefaultApplyTemplate,
 			value: CommonTemplate{
-				Title:   "title",
-				Message: "message",
-				Result:  "result",
-				Body:    "body",
+				Title:       "title",
+				Message:     "message",
+				Result:      "result",
+				Body:        "body",
+				RawTemplate: NewRawHTMLTemplate(),
 			},
 			resp: `
 title
@@ -358,10 +379,11 @@ message
 		{
 			template: DefaultApplyTemplate,
 			value: CommonTemplate{
-				Title:   "title",
-				Message: "message",
-				Result:  "",
-				Body:    "body",
+				Title:       "title",
+				Message:     "message",
+				Result:      "",
+				Body:        "body",
+				RawTemplate: NewRawHTMLTemplate(),
 			},
 			resp: `
 title
@@ -378,10 +400,11 @@ message
 		{
 			template: "",
 			value: CommonTemplate{
-				Title:   "title",
-				Message: "message",
-				Result:  "",
-				Body:    "body",
+				Title:       "title",
+				Message:     "message",
+				Result:      "",
+				Body:        "body",
+				RawTemplate: NewRawHTMLTemplate(),
 			},
 			resp: `
 title
@@ -398,10 +421,11 @@ message
 		{
 			template: `{{ .Title }}-{{ .Message }}-{{ .Result }}-{{ .Body }}`,
 			value: CommonTemplate{
-				Title:   "a",
-				Message: "b",
-				Result:  "c",
-				Body:    "d",
+				Title:       "a",
+				Message:     "b",
+				Result:      "c",
+				Body:        "d",
+				RawTemplate: NewRawHTMLTemplate(),
 			},
 			resp: `a-b-c-d`,
 		},
